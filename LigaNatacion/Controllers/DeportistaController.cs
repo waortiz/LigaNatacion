@@ -38,5 +38,11 @@ namespace LigaNatacion.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public ActionResult Actualizar(Deportista deportista)
+        {
+            return View();
+        }
     }
 }
