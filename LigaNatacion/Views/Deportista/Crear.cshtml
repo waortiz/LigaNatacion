@@ -1,0 +1,193 @@
+﻿@model LigaNatacion.Models.Deportista
+<br />
+<br />
+<form id="deportista" name="deportista" method="post" action="/Deportista/Crear">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                Deportista
+            </div>
+            <div class="card-body">
+                <div id="mensaje"></div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="primerNombre">Primer nombre</label>
+                      @Html.TextBoxFor(p => p.PrimerNombre,
+                       new
+                       {
+                           @class = "form-control",
+                           @placeholder = "Primer Nombre",
+                           @maxlength = "100",
+                           @required = "required"
+                       })
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="segundoNombre">Segundo nombre</label>
+                            @Html.TextBoxFor(p => p.SegundoNombre,
+                          new
+                          {
+                              @class = "form-control",
+                              @placeholder = "Segundo Nombre",
+                              @maxlength = "100"
+                          })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="primerApellido">Primer apellido</label>
+                            @Html.TextBoxFor(p => p.PrimerApellido,
+                       new
+                       {
+                           @class = "form-control",
+                           @placeholder = "Primer Apellido",
+                           @maxlength = "100",
+                           @required = "required"
+                       })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="segundoApellido">Segundo apellido</label>
+                           @Html.TextBoxFor(p => p.SegundoApellido,
+                          new
+                          {
+                              @class = "form-control",
+                              @placeholder = "Segundo Apellido",
+                              @maxlength = "100"
+                          })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="tipoDocumento">Tipo de documento</label>
+                        @Html.DropDownListFor(p => p.TipoDocumento,
+                       (IEnumerable<SelectListItem>)ViewBag.TiposDocumento, 
+                       string.Empty,
+                       new { @class = "form-control", @required = "required" })
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="numeroDocumento">Número de documento</label>
+                            @Html.TextBoxFor(p => p.NumeroDocumento,
+                       new
+                       {
+                           @class = "form-control numero",
+                           @placeholder = "Introduce el número de documento",
+                           @required = "required",
+                           @maxlength = "20"
+                       })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="fechaNacimiento">Fecha de nacimiento</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(p => p.FechaNacimiento, "{0:dd/MM/yyyy}",
+                           new
+                           {
+                               @class = "form-control datepicker",
+                               @placeholder = "Introduce la fecha de nacimiento",
+                               @required = "required",
+                               @readonly = "readonly",
+                               @maxlength = "10"
+                           })
+                            <div class="input-group-addon">
+                                <span class="glyphicon glyphicon-th"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="control-label">Género</label>
+                            <div class="form-group">
+                                <label class="radio-inline">
+                                    @Html.RadioButtonFor(p => p.Genero, "F")
+                                    &nbsp;Femenino&nbsp;
+                                    @Html.RadioButtonFor(p => p.Genero, "M")
+                                    &nbsp;Masculino
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="submit" value="Guardar"
+                               class="btn btn-primary" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $('.datepicker').datepicker({
+            format: 'dd/mm/yyyy',
+            language: 'es',
+            autoclose: true
+        });
+        $('.numero').keyup(function () {
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+
+        mensaje = {};
+        mensaje.warning = function (texto) {
+            $('#mensaje').
+                html('<div class="alert alert-danger">' +
+                '<a class="close" data-dismiss="alert">x</a><span>'
+                + texto + '</span></div>');
+        };
+        function validarFechaNacimiento(fecha) {
+            if (fecha === "") return false;
+            var fechas = fecha.split("/");
+            var nuevaFecha = new Date(parseInt(fechas[2], 10),
+                parseInt(fechas[1], 10) - 1,
+                parseInt(fechas[0], 10));
+            if (nuevaFecha > new Date()) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        $('#deportista').submit(function (event) {
+            if ($('#NumeroDocumento').val().length < 6) {
+                mensaje.warning('El número de documento debe' +
+                    ' tener mínimo seis dígitos');
+                return false;
+            }
+            if (!validarFechaNacimiento($('#FechaNacimiento').val())) {
+                mensaje.warning('La fecha de nacimiento no es válida');
+                return false;
+            }
+            if (!$('#Genero:checked').val()) {
+                mensaje.warning('Debe seleccionar el género');
+                return false;
+            }
+
+            event.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("Crear", "Deportista")',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    
+                },
+                error: function (xhr, ajaxOptions, thrownError) {
+                    mensaje.warning("Error al almacenar el deportista.");
+                }
+            });
+        });
+    </script>
+</form>

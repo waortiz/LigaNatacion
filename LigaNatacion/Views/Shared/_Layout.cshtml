@@ -1,0 +1,21 @@
+﻿<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" href="~/content/bootstrap/css/bootstrap.min.css">
+    <link href="~/Content/datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet" />
+    
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script> 
+    <script src="~/content/bootstrap/js/bootstrap.min.js"></script>
+    <script src="~/Content/datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/Content/datepicker/locales/bootstrap-datepicker.es.min.js"></script>
+</head>
+<body>
+    @RenderBody()
+    @RenderSection("scripts", required: false)
+</body>
+</html>
